@@ -1,13 +1,68 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package model;
 
-/**
- *
- * @author NCPC
- */
 public class Homestay {
+    public String homeID;
+    public String homeName;
+    public int roomNumber;
+    public String address;
+    public int maximumCapacity;
+
+    public Homestay() {
+    }
+
+    public Homestay(String homeID, String homeName, int roomNumber, String address, int maximumCapacity) {
+        this.homeID = homeID;
+        this.homeName = homeName;
+        this.roomNumber = roomNumber;
+        this.address = address;
+        this.maximumCapacity = maximumCapacity;
+    }
+    
+    public String getHomeID() {
+        return homeID;
+    }
+
+    public void setHomeID(String homeID) {
+        this.homeID = homeID;
+    }
+
+    public String getHomeName() {
+        return homeName;
+    }
+
+    public void setHomeName(String homeName) {
+        this.homeName = homeName;
+    }
+
+    public int getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(int roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public int getMaximumcapacity() {
+        return maximumCapacity;
+    }
+
+    public void setMaximumcapacity(int maximumCapacity) {
+        this.maximumCapacity = maximumCapacity;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("| %-8s | %-25s | %-5d | %-40s | %-5d |", 
+                homeID, homeName, roomNumber, address, maximumCapacity);
+    }
     
 }
