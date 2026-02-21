@@ -5,6 +5,7 @@ public interface Acceptable {
     public final String TOUR_ID_VALID = "^T\\d{5}$";
     public final String HOMESTAY_ID_VALID = "^HS\\d{4}$";
     public final String INTEGER_VALID = "^[1-9]\\d*$";
+    public final String DOUBLE_VALID = "^[+-]?\\d+(\\.\\d+)?";
 
     public final String NAME_VALID = "^.+$";
     public final String TIME_VALID = "^.+$";
