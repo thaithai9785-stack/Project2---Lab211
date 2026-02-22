@@ -11,11 +11,14 @@ import java.util.Date;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Booking;
+import model.Tour;
 
 public class Inputter {
 
     private Scanner ndl;
 
+    
     public Inputter() {
         this.ndl = new Scanner(System.in);
     }
@@ -24,16 +27,10 @@ public class Inputter {
         return ndl;
     }
 
-    public String getString(mess){
-        String input;
+    public String getString(String mess){
         System.out.print(mess);
         return this.ndl.nextLine();
-        // Kiểm tra xem có rỗng không
-        if (input.isEmpty()) {
-            System.out.println("Invallid data. Try again:");
-        } else {
-            return input; 
-        }
+      
     }
     
     //Kiểm tra dữ liệu nhập vào có hợp lệ hay không
@@ -86,4 +83,38 @@ public class Inputter {
         }
     }
 
+    
+  
+    public Tour getTourInfo() {
+        Tour x = new Tour();
+      
+        x.setTourID(inputAndLoop("Input Tour ID (ex: T00001): ", Acceptable.TOUR_ID_VALID, true));
+        x.setTourName(inputAndLoop("Input Tour Name: ", Acceptable.NAME_VALID, true));
+        x.setTime(inputAndLoop("Input Time (ex: 3 Days): ", Acceptable.TIME_VALID, true));
+        
+        // 2. Nhập số: Dùng INTEGER_VALID như đề yêu cầu
+        String priceStr = inputAndLoop("Input Price (Positive Integer): ", Acceptable.INTEGER_VALID, true);
+        x.setPrice(Double.parseDouble(priceStr));
+        
+        x.setHomeID(inputAndLoop("Input Homestay ID (ex: HS0001): ", Acceptable.HOMESTAY_ID_VALID, true));
+        x.setDeparture_date(inputAndLoop("Input Departure Date (dd/mm/yyyy): ", Acceptable.DATE_VALID, true));
+        x.setEnd_date(inputAndLoop("Input End Date (dd/mm/yyyy): ", Acceptable.DATE_VALID, true));
+        
+        // 3. Nhập số lượng khách
+        String numStr = inputAndLoop("Input Number of Tourists: ", Acceptable.INTEGER_VALID, true);
+        x.setNumber_Tourist(Integer.parseInt(numStr));
+        return x;
+    }
+    
+    public Booking getBookingInfo() {
+        Booking b = new Booking();
+        b.setBookingID(inputAndLoop("Input Booking ID (ex: B00001): ", Acceptable.BOOKING_ID_VALID, true));
+        b.setFullName(inputAndLoop("Input Full Name: ", Acceptable.NAME_VALID, true));
+        b.setTourID(inputAndLoop("Input Tour ID to book (ex: T00001): ", Acceptable.TOUR_ID_VALID, true));
+        b.setBooking_date(inputAndLoop("Input Booking Date (dd/mm/yyyy): ", Acceptable.DATE_VALID, true));      
+        b.setPhone(inputAndLoop("Input Phone Number (10 digits): ", Acceptable.PHONE_VALID, true));
+        
+        return b;
+    }
+    
 }

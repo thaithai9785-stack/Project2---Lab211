@@ -9,7 +9,7 @@ public interface Acceptable {
 
     public final String NAME_VALID = "^.+$";
     public final String TIME_VALID = "^.+$";
-    public final String DATE_VALID = "^\\d{2}\\d{2}\\d{4}$";
+    public final String DATE_VALID = "^\\d{2}/\\d{2}/\\d{4}$";
 
     public final String BOOKING_ID_VALID = "^B\\d{5}$";
     public final String PHONE_VALID = "^0\\d{9}$";
