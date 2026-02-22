@@ -30,45 +30,33 @@ public class TourManager extends ArrayList<Tour> {
         this.pathFile = "./Tours.txt";
         this.readFromFile();
 
-        this.add(new Tour("T01", "Da Lat", "3 Days", 1500.0, "HS0001", "15/03/2026", "17/03/2026", 10, false));
-        this.add(new Tour("T02", "Nha Trang", "2 Days", 800.5, "HS0002", "20/04/2026", "21/04/2026", 5, true));
-        this.add(new Tour("T03", "Sapa", "4 Days", 2500.0, "HS0003", "10/05/2025", "13/05/2026", 20, false));
+        this.add(new Tour("T11111", "Da Lat", "3 Days", 1500.0, "HS0001", "15/03/2026", "17/03/2026", 10, false));
+        this.add(new Tour("T11112", "Nha Trang", "2 Days", 800.5, "HS0002", "20/04/2026", "21/04/2026", 5, true));
+        this.add(new Tour("T11113", "Sapa", "4 Days", 2500.0, "HS0003", "10/05/2025", "13/05/2026", 20, false));
     }
 
     public void readFromFile() {
-        FileReader fr = null;
-        try {
-            File f = new File(pathFile);
-            if (!f.exists()) {
-                System.out.println("File not found: " + pathFile);
-                return; 
+        this.clear(); 
+        File f = new File(pathFile);
+        if (!f.exists()) {
+            System.out.println("File not found: " + pathFile);
+            return;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                Tour x = textToTour(line);
+                if (x != null) this.add(x);
             }
-            fr = new FileReader(f);
-            BufferedReader br = new BufferedReader(fr);
-            String tam = "";
-            while ((tam = br.readLine()) != null) {
-                Tour x = textToTour(tam);
-                if (x != null) {
-                    this.add(x);
-                }
-            }   
-            br.close();
-            System.out.println("Loaded tours successfully!");
-         
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(TourManager.class.getName()).log(Level.SEVERE, null, ex);
+            // In số lượng để kiểm tra thực tế trong RAM
+            System.out.println("Nạp thành công " + this.size() + " tours từ file!");
         } catch (IOException ex) {
             Logger.getLogger(TourManager.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                if (fr != null) {
-                    fr.close();
-                }
-            } catch (IOException ex) {
-                Logger.getLogger(TourManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
         }
     }
+    
+ 
     
     
     public Tour textToTour(String tam){
@@ -80,11 +68,11 @@ public class TourManager extends ArrayList<Tour> {
                 String id = temp[0].trim();
                 String name = temp[1].trim();
                 String time = temp[2].trim();
-                double price = Double.parseDouble(temp[3].trim());
+                double price = Double.parseDouble(temp[3].trim().replaceAll("[^0-9.]", ""));
                 String homeId = temp[4].trim();
                 String depDate = temp[5].trim();
                 String endDate = temp[6].trim();
-                int numTourist = Integer.parseInt(temp[7].trim());
+                int numTourist = Integer.parseInt(temp[7].trim().replaceAll("[^0-9]", ""));
                 boolean isBooked = Boolean.parseBoolean(temp[8].trim());
    
                 t = new Tour(id, name, time, price, homeId, depDate, endDate, numTourist, isBooked);            
@@ -226,6 +214,30 @@ public class TourManager extends ArrayList<Tour> {
     }
     
     
+    public void listToursDepartureEarlier1() {
+        System.out.println("\n--- TOURS DEPARTURE EARLIER THAN " + LocalDate.now() + " ---");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        LocalDate currentDate = LocalDate.now();
+        boolean found = false;
+
+        for (Tour t : this) {
+            try {
+                // Dọn dẹp chuỗi ngày: Chỉ giữ lại số và dấu gạch chéo 
+                String cleanDate = t.getDeparture_date().trim().replaceAll("[^0-9/]", "");
+                LocalDate depDate = LocalDate.parse(cleanDate, formatter);
+                
+                if (depDate.isBefore(currentDate)) {
+                    System.out.println(t.toString());
+                    found = true;
+                }
+            } catch (Exception e) {
+                // In lỗi ra để debug nếu ngày vẫn bị sai định dạng
+                System.err.println("Lỗi parse ngày tại Tour " + t.getTourID() + ": " + t.getDeparture_date());
+            }
+        }
+        if (!found) System.out.println("No tours found earlier than current date!");
+    }
+    
     // --- CASE 3: Lọc Tour có ngày khởi hành TRƯỚC ngày hiện tại ---
     public void listToursDepartureEarlier() {
         System.out.println("\n--- DANH SÁCH TOUR KHỞI HÀNH TRƯỚC NGÀY HIỆN TẠI ---");
@@ -286,5 +298,7 @@ public class TourManager extends ArrayList<Tour> {
             System.out.println(t.toString() + " | Total Amount: " + totalAmount);
         }
     }
+    
+ 
     
 }

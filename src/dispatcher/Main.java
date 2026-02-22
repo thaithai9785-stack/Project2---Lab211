@@ -42,10 +42,13 @@ public class Main {
                     break;
                 case 2:
                     System.out.println("\n--- 2. UPDATE A TOUR BY ID ---");
-                    System.out.println("Chức năng đang xây dựng...");
+                    System.out.print("Nhập mã Tour cần cập nhật (vd: T00001): ");
+                    String idToUpdate = sc.nextLine().trim();
+
+                    tourManager.updateTourById(idToUpdate); 
                     break;
                 case 3:
-                    tourManager.listToursDepartureEarlier();
+                    tourManager.listToursDepartureEarlier1();
                     break;
                 case 4:
                     tourManager.listToursDepartureLaterAndSort();
@@ -59,19 +62,25 @@ public class Main {
                     break;
                 case 6:
                     System.out.println("\n--- 6. REMOVE A BOOKING ---");
-                    System.out.println("Chức năng đang xây dựng...");
+                    System.out.print("Nhập mã Booking cần xóa (vd: B00001): ");
+                    String removeId = sc.nextLine().trim();
+                    bookingManager.removeBookingById(removeId);
                     break;
                 case 7:
                     System.out.println("\n--- 7. UPDATE A BOOKING ---");
-                    System.out.println("Chức năng đang xây dựng...");
+                    System.out.print("Nhập mã Booking cần cập nhật (vd: B00001): ");
+                    String updateBkId = sc.nextLine().trim();
+                    bookingManager.updateBookingById(updateBkId);
                     break;
                 case 8:
                     System.out.println("\n--- 8. LIST BOOKINGS BY NAME ---");
-                    System.out.println("Chức năng đang xây dựng...");
+                    System.out.print("Nhập tên khách hàng cần tìm (VD: Binh): ");
+                    String searchName = sc.nextLine().trim();
+                    bookingManager.listBookingsByName(searchName);
                     break;
                 case 9:
-                    System.out.println("\n--- 9. STATISTICS ---");
-                    System.out.println("Chức năng đang xây dựng...");
+                    // Truyền hsManager vào để hàm có thể lấy được tên Homestay (HomeName)
+                    bookingManager.printStatistics(hsManager); 
                     break;
                 case 10:
                     System.out.println("\nExiting program. Goodbye!");
