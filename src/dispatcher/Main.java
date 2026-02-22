@@ -48,7 +48,7 @@ public class Main {
                     tourManager.updateTourById(idToUpdate); 
                     break;
                 case 3:
-                    tourManager.listToursDepartureEarlier1();
+                    tourManager.listToursDepartureEarlier();
                     break;
                 case 4:
                     tourManager.listToursDepartureLaterAndSort();
@@ -79,12 +79,18 @@ public class Main {
                     bookingManager.listBookingsByName(searchName);
                     break;
                 case 9:
-                    // Truyền hsManager vào để hàm có thể lấy được tên Homestay (HomeName)
-                    bookingManager.printStatistics(hsManager); 
+                    bookingManager.printStatistics(hsManager, tourManager); 
                     break;
                 case 10:
-                    System.out.println("\nExiting program. Goodbye!");
-                    // Lát nữa sẽ thêm code Save to File vào đây
+                    System.out.print("\nBạn có muốn lưu mọi thay đổi vào file trước khi thoát không? (Y/N): ");
+                    String confirm = sc.nextLine().trim();
+                    
+                    if (confirm.equalsIgnoreCase("Y")) {
+                        tourManager.saveToFile();
+                        bookingManager.saveToFile();
+                    }
+                    
+                    System.out.println("\nCảm ơn bạn đã sử dụng hệ thống HOMESTAY BOOKING MANAGEMENT. Tạm biệt!");
                     break;
                 default:
                     System.out.println("Lựa chọn không hợp lệ. Vui lòng nhập từ 1 đến 10.");

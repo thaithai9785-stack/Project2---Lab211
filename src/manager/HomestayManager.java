@@ -32,6 +32,8 @@ public class HomestayManager extends ArrayList<Homestay> {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
+                // Nằm trong vòng lặp while đọc file của HomestayManager:
+
                 if (line.trim().isEmpty()) continue; 
                 if (line.startsWith("\uFEFF")) {
                     line = line.substring(1);

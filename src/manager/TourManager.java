@@ -154,20 +154,30 @@ public class TourManager extends ArrayList<Tour> {
         while (true) {
             System.out.print("Giá mới: ");
             String priceStr = sc.nextLine().trim();
-            if (priceStr.isEmpty()) break; 
+            if (priceStr.isEmpty()) {
+                break;
+            }
             try {
                 double p = Double.parseDouble(priceStr);
-                if (p > 0) { t.setPrice(p); break; }
-                else System.out.println("-> Giá phải lớn hơn 0!");
-            } catch (Exception e) { System.out.println("-> Lỗi định dạng số!"); }
+                if (p > 0) {
+                    t.setPrice(p);
+                    break;
+                } else {
+                    System.out.println("-> Giá phải lớn hơn 0!");
+                }
+            } catch (Exception e) {
+                System.out.println("-> Lỗi định dạng số!");
+            }
         }
 
         // 5. Cập nhật Mã Homestay (Check tồn tại)
         while (true) {
             System.out.print("Mã mới (vd: HS0001): ");
             String hId = sc.nextLine().trim();
-            if (hId.isEmpty()) break; 
-            
+            if (hId.isEmpty()) {
+                break;
+            }
+
             Homestay hs = hsManager.searchHomestayById(hId);
             if (hs == null) {
                 System.out.println("-> Lỗi: Mã Homestay không tồn tại!");
@@ -214,7 +224,7 @@ public class TourManager extends ArrayList<Tour> {
     }
     
     
-    public void listToursDepartureEarlier1() {
+    public void listToursDepartureEarlier() {
         System.out.println("\n--- TOURS DEPARTURE EARLIER THAN " + LocalDate.now() + " ---");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate currentDate = LocalDate.now();
@@ -238,26 +248,6 @@ public class TourManager extends ArrayList<Tour> {
         if (!found) System.out.println("No tours found earlier than current date!");
     }
     
-    // --- CASE 3: Lọc Tour có ngày khởi hành TRƯỚC ngày hiện tại ---
-    public void listToursDepartureEarlier() {
-        System.out.println("\n--- DANH SÁCH TOUR KHỞI HÀNH TRƯỚC NGÀY HIỆN TẠI ---");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate currentDate = LocalDate.now();
-        boolean found = false;
-
-        for (Tour t : this) {
-            try {
-                LocalDate depDate = LocalDate.parse(t.getDeparture_date(), formatter);
-                if (depDate.isBefore(currentDate)) { // So sánh TRƯỚC (Earlier)
-                    System.out.println(t.toString());
-                    found = true;
-                }
-            } catch (Exception e) {
-                // Bỏ qua nếu có tour bị lỗi định dạng ngày
-            }
-        }
-        if (!found) System.out.println("Không có tour nào thỏa mãn điều kiện!");
-    }
 
     // --- CASE 4: Lọc Tour khởi hành SAU ngày hiện tại & Sắp xếp giảm dần ---
     public void listToursDepartureLaterAndSort() {
@@ -300,5 +290,19 @@ public class TourManager extends ArrayList<Tour> {
     }
     
  
+    // --- LƯU DỮ LIỆU TOUR XUỐNG FILE ---
+    public void saveToFile() {
+        try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.File(pathFile))) {
+            for (Tour t : this) {
+                // Nối các thuộc tính bằng dấu phẩy giống hệt cấu trúc lúc đọc file
+                pw.println(t.getTourID() + "," + t.getTourName() + "," + t.getTime() + "," +
+                           t.getPrice() + "," + t.getHomeID() + "," + t.getDeparture_date() + "," +
+                           t.getEnd_date() + "," + t.getNumber_Tourist() + "," + t.isBooking());
+            }
+            System.out.println("-> Đã lưu dữ liệu Tour vào file thành công!");
+        } catch (Exception e) {
+            System.err.println("-> Lỗi không thể lưu file Tour!");
+        }
+    }
     
 }

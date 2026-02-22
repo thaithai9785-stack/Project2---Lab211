@@ -242,33 +242,40 @@ public class BookingManager extends ArrayList<Booking> {
     }
 
     // --- CASE 9: THỐNG KÊ SỐ LƯỢNG KHÁCH THEO HOMESTAY ---
-    public void printStatistics(HomestayManager hsManager) {
+
+    public void printStatistics(HomestayManager hsManager, TourManager tourManager) {
         System.out.println("\n--- THỐNG KÊ SỐ LƯỢNG KHÁCH THEO HOMESTAY ---");
         System.out.printf("| %-30s | %-15s |\n", "HomeName", "Number_Tourist");
         System.out.println("----------------------------------------------------");
         
         boolean hasData = false;
 
-        // Vòng lặp 1: Lấy từng Homestay ra để kiểm tra
+        // Quét từng Homestay
         for (Homestay hs : hsManager) {
-            int totalTourists = 0; // Biến đếm số khách cho Homestay hiện tại
+            int totalTourists = 0;
+            // XÓA SẠCH mọi thứ không phải chữ và số, ép về chữ thường
+            String currentHsId = hs.getHomeID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase(); 
 
-            // Vòng lặp 2: Quét toàn bộ danh sách Booking
+            // Quét từng Booking
             for (Booking b : this) {
-                // Lấy thông tin Tour mà khách này đã đặt
-                Tour t = tourManager.searchTourById(b.getTourID());
+                String bookingTourId = b.getTourID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
                 
-                // Nếu Tour tồn tại VÀ Tour đó thuộc về Homestay đang xét
-                if (t != null && t.getHomeID().equalsIgnoreCase(hs.getHomeID())) {
-                    // Cộng dồn số lượng khách của Tour đó vào biến đếm
-                    totalTourists += t.getNumber_Tourist();
+                // Quét từng Tour
+                for (Tour t : tourManager) {
+                    String tourId = t.getTourID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+                    String tourHomeId = t.getHomeID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+
+                    // Khớp mã tuyệt đối
+                    if (tourId.equals(bookingTourId) && tourHomeId.equals(currentHsId)) {
+                        totalTourists += t.getNumber_Tourist();
+                    }
                 }
             }
 
-            // Sau khi đếm xong, nếu Homestay này có khách đặt thì mới in ra màn hình
+            // In ra bảng nếu có khách
             if (totalTourists > 0) {
                 System.out.printf("| %-30s | %-15d |\n", hs.getHomeName(), totalTourists);
-                hasData = true; // Đánh dấu là hệ thống có dữ liệu
+                hasData = true;
             }
         }
 
@@ -276,6 +283,21 @@ public class BookingManager extends ArrayList<Booking> {
             System.out.println("Chưa có dữ liệu Booking nào để thống kê!");
         }
         System.out.println("----------------------------------------------------");
+    }
+    
+    
+    // --- LƯU DỮ LIỆU BOOKING XUỐNG FILE ---
+    public void saveToFile() {
+        // Giả sử đường dẫn file Booking của bạn là "Bookings.txt"
+        try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.File("Bookings.txt"))) {
+            for (Booking b : this) {
+                pw.println(b.getBookingID() + "," + b.getFullName() + "," + 
+                           b.getTourID() + "," + b.getBooking_date() + "," + b.getPhone());
+            }
+            System.out.println("-> Đã lưu dữ liệu Booking vào file thành công!");
+        } catch (Exception e) {
+            System.err.println("-> Lỗi không thể lưu file Booking!");
+        }
     }
     
 }
