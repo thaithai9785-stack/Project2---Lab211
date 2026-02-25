@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -69,63 +71,42 @@ public class BookingManager extends ArrayList<Booking> {
 
     // 2. TÌM KIẾM BOOKING (Ràng buộc 2a) [cite: 195]
     public Booking searchBookingById(String id) {
-        if (id == null) return null;
         for (Booking b : this) {
-            if (b.getBookingID().trim().equalsIgnoreCase(id.trim())) {
+            if(b.getBookingID().equalsIgnoreCase(id))
                 return b;
-            }
         }
         return null;
     }
 
     // 3. THÊM BOOKING MỚI 
     public void addNewBooking(Booking b) {
-        // 1. Kiểm tra mã Booking không được trùng 
-        if (searchBookingById(b.getBookingID()) != null) {
-            System.out.println("Lỗi: Mã Booking [" + b.getBookingID() + "] đã tồn tại trên hệ thống!");
+        if(searchBookingById(b.getBookingID())!=null){
+            System.out.println("Booking đã tồn tại");
             return;
         }
-
-        // 2. Kiểm tra Tour khách muốn đặt có tồn tại không 
+        
         Tour t = tourManager.searchTourById(b.getTourID());
-        if (t == null) {
-            System.out.println("Lỗi: Mã Tour [" + b.getTourID() + "] không tồn tại! Vui lòng kiểm tra lại.");
+        if(t== null){
+            System.out.println("Tour đã tồn tại");
             return;
         }
-
-        // 3. Kiểm tra logic Thời gian: Ngày đặt PHẢI TRƯỚC ngày khởi hành 
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            sdf.setLenient(false);
-            Date bookingDate = sdf.parse(b.getBooking_date());
-            Date departureDate = sdf.parse(t.getDeparture_date());
-
-            if (!bookingDate.before(departureDate)) {
-                System.out.println("Lỗi: Ngày đặt tour (" + b.getBooking_date() + ") phải TRƯỚC ngày khởi hành (" + t.getDeparture_date() + ")!");
+        
+        DateTimeFormatter fm = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        
+ 
+        
+            LocalDate depDate = LocalDate.parse(t.getDeparture_date(), fm);
+            LocalDate bookDate = LocalDate.parse(b.getBooking_date(), fm);
+            if (bookDate.isAfter(depDate)) {
+                System.out.println("ngay dat phai truoc ngay khoi hanh");
                 return;
             }
-        } catch (Exception e) {
-            System.out.println("Lỗi: Hệ thống không thể xử lý định dạng ngày tháng!");
-            return;
-        }
-
-        // 4. Mọi thứ hoàn hảo -> Lưu Booking và Cập nhật trạng thái Tour
+     
+       
+        t.setBooking(true);
         this.add(b);
-        t.setBooking(true); // Đổi trạng thái Tour thành ĐÃ CÓ NGƯỜI ĐẶT
-        System.out.println("Thành công: Đã chốt đơn Booking [" + b.getBookingID() + "] cho Tour [" + t.getTourID() + "]!");
-    }
-    
-    // 4. HIỂN THỊ DANH SÁCH BOOKING (Cho chức năng số 8)   
-    public void printAllBookings() {
-        if (this.isEmpty()) {
-            System.out.println("Danh sách Booking đang trống!");
-            return;
-        }
-        System.out.println("\n--- LIST OF BOOKINGS ---");
-        for (Booking b : this) {
-            System.out.println(b.toString());
-        }
-        System.out.println("------------------------");
+        System.out.println("add thanh cong");
+        
     }
     
     // --- CASE 6: XÓA BOOKING ---

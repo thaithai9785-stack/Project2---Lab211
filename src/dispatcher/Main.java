@@ -52,11 +52,8 @@ public class Main {
                     tourManager.listToursDepartureLaterAndSort();
                     break;
                 case 5:
-                    System.out.println("\n--- 5. ADD A NEW BOOKING ---");
-                    Booking newBooking = ndl.getBookingInfo();
-                    if (newBooking != null) {
-                        bookingManager.addNewBooking(newBooking);
-                    }
+                    Booking b = ndl.getBookingInfo();
+                    bookingManager.addNewBooking(b);
                     break;
                 case 6:
                     System.out.println("\n--- 6. REMOVE A BOOKING ---");
