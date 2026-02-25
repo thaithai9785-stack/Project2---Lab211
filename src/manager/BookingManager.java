@@ -78,22 +78,22 @@ public class BookingManager extends ArrayList<Booking> {
         return null;
     }
 
-    // 3. THÊM BOOKING MỚI (Xử lý các ràng buộc phức tạp) [cite: 207, 215]
+    // 3. THÊM BOOKING MỚI 
     public void addNewBooking(Booking b) {
-        // 1. Kiểm tra mã Booking không được trùng (Constraint 2a)
+        // 1. Kiểm tra mã Booking không được trùng 
         if (searchBookingById(b.getBookingID()) != null) {
             System.out.println("Lỗi: Mã Booking [" + b.getBookingID() + "] đã tồn tại trên hệ thống!");
             return;
         }
 
-        // 2. Kiểm tra Tour khách muốn đặt có tồn tại không (Constraint 2c)
+        // 2. Kiểm tra Tour khách muốn đặt có tồn tại không 
         Tour t = tourManager.searchTourById(b.getTourID());
         if (t == null) {
             System.out.println("Lỗi: Mã Tour [" + b.getTourID() + "] không tồn tại! Vui lòng kiểm tra lại.");
             return;
         }
 
-        // 3. Kiểm tra logic Thời gian: Ngày đặt PHẢI TRƯỚC ngày khởi hành (Constraint 2d)
+        // 3. Kiểm tra logic Thời gian: Ngày đặt PHẢI TRƯỚC ngày khởi hành 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             sdf.setLenient(false);
@@ -115,7 +115,7 @@ public class BookingManager extends ArrayList<Booking> {
         System.out.println("Thành công: Đã chốt đơn Booking [" + b.getBookingID() + "] cho Tour [" + t.getTourID() + "]!");
     }
     
-    // 4. HIỂN THỊ DANH SÁCH BOOKING (Cho chức năng số 8) [cite: 210]
+    // 4. HIỂN THỊ DANH SÁCH BOOKING (Cho chức năng số 8)   
     public void printAllBookings() {
         if (this.isEmpty()) {
             System.out.println("Danh sách Booking đang trống!");

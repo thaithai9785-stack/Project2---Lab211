@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.Buffer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,9 +21,12 @@ import model.Homestay;
 import model.Tour;
 
 public class TourManager extends ArrayList<Tour> {
-
+    Scanner sc = new Scanner(System.in);
     private HomestayManager hsManager;
     private String pathFile;
+    private final String TABLE_HEADER = ("|------------------------------------------------------------------|\n"
+                + "| ID     | Tên Tour        | Thời gian       | Giá        | HomeID | Ngày đi    | Ngày về   |SL |Booking|\n"
+                + "|--------|-----------------|-----------------|------------|--------|------------|-----------|---|-------|");
    
     public TourManager(HomestayManager hsManager) {
         super();
@@ -102,154 +106,152 @@ public class TourManager extends ArrayList<Tour> {
     
     public Tour searchTourById(String id) {
         for (Tour t : this) {
-            if (t.tourID.equalsIgnoreCase(id)) {
+            if(t.getTourID().equalsIgnoreCase(id))
                 return t;
-            }
         }
         return null;
     }
 
-    public void addNew(Tour x) {
-        Homestay hs = hsManager.searchHomestayById(x.homeID);
-        if (searchTourById(x.tourID) != null) {
-            System.out.println("Lỗi: tourID đã tồn tại!");
+    public void addNew(Tour x){
+        if (searchTourById(x.getTourID()) != null) {
+            System.out.println("Tour đã tồn tại");
             return;
         }
-        if (hs == null) {
-            System.out.println("Lỗi: Mã Homestay không tồn tại!");
+        
+        Homestay hs = hsManager.searchHomestayById(x.getHomeID());
+        if(hs == null){
+            System.out.println("ko tim thay homestay");
             return;
         }
-        if (x.number_Tourist > hs.getMaximumcapacity()) {
-            System.out.println("Lỗi: Quá sức chứa tối đa (" + hs.getMaximumcapacity() + ")!");
+        
+        if(x.getNumber_Tourist() > hs.getMaximumcapacity()){
+            System.out.println("ko du suc chua");
             return;
         }
+        
         this.add(x);
-        System.out.println("Thêm Tour [" + x.tourID + "] thành công!");
-
+        System.out.println("Add new thanh cong");
     }
     
-    public void updateTourById(String tourID) {
-        // 1. Kiểm tra tồn tại
-        Tour t = searchTourById(tourID);
-        if (t == null) {
-            System.out.println("This tour does not exist!");
-            return;
-        }
+       public void UpdateByTourId(String id) {
+           Tour t = searchTourById(id);
+           if(searchTourById(id)==null){
+               System.out.println("This tour does not exist");
+               return;
+           }
+           
+           System.out.println("Update:");
+           System.out.println("(ko muốn update, enter lần nữa)");
+           t.setTourName(getNewData("Tour Name: ", t.getTourName()));
+           t.setTime(getNewData("time: ", t.getTime()));
+           
+          
+           boolean flag = false;
+           while (flag == false) {
+               System.out.print("Price: ");
+               String priceS = sc.nextLine();
+               if (priceS.isEmpty()) {
+                   break;
+               }
+               try {
+                   Double p = Double.parseDouble(priceS);
+                   if (p < 0) {
+                       System.out.println("price ko dc âm");
+                   } else {
+                       t.setPrice(p);
+                       flag = true;
+                   }
+               } catch (Exception e) {
+                   System.out.println("Lổi định dang");
+               }
 
-        Scanner sc = new Scanner(System.in);
-        System.out.println("\n--- CẬP NHẬT TOUR [" + tourID + "] ---");
-        System.out.println("(Mẹo: Nhấn phím ENTER để bỏ qua nếu muốn giữ nguyên giá trị cũ)");
+           }
+        
+           
+           boolean flag1 = false;
+           while (flag == false) {
+               System.out.print("HomeID: ");
+               String HomeID = sc.nextLine();
+               if (HomeID.isEmpty()) {
+                   break;
+               }
 
-        // 2. Cập nhật Tên Tour
-        System.out.print("Tên mới: ");
-        String name = sc.nextLine().trim();
-        if (!name.isEmpty()) t.setTourName(name);
-
-        // 3. Cập nhật Thời gian
-        System.out.print("Thời gian mới: ");
-        String time = sc.nextLine().trim();
-        if (!time.isEmpty()) t.setTime(time);
-
-        // 4. Cập nhật Giá (Xử lý lỗi nhập chữ)
-        while (true) {
-            System.out.print("Giá mới: ");
-            String priceStr = sc.nextLine().trim();
-            if (priceStr.isEmpty()) {
-                break;
-            }
-            try {
-                double p = Double.parseDouble(priceStr);
-                if (p > 0) {
-                    t.setPrice(p);
-                    break;
-                } else {
-                    System.out.println("-> Giá phải lớn hơn 0!");
-                }
-            } catch (Exception e) {
-                System.out.println("-> Lỗi định dạng số!");
-            }
-        }
-
-        // 5. Cập nhật Mã Homestay (Check tồn tại)
-        while (true) {
-            System.out.print("Mã mới (vd: HS0001): ");
-            String hId = sc.nextLine().trim();
-            if (hId.isEmpty()) {
-                break;
-            }
-
-            Homestay hs = hsManager.searchHomestayById(hId);
-            if (hs == null) {
-                System.out.println("-> Lỗi: Mã Homestay không tồn tại!");
-            } else {
-                t.setHomeID(hId);
-                break;
-            }
-        }
-
-        // 6. Cập nhật Ngày khởi hành
-        System.out.print("Ngày mới (dd/mm/yyyy): ");
-        String dDate = sc.nextLine().trim();
-        if (!dDate.isEmpty()) t.setDeparture_date(dDate);
-
-        // 7. Cập nhật Ngày kết thúc
-        System.out.print("Ngày mới (dd/mm/yyyy): ");
-        String eDate = sc.nextLine().trim();
-        if (!eDate.isEmpty()) t.setEnd_date(eDate);
-
-        // 8. Cập nhật Số lượng khách (Check sức chứa Homestay)
-        while (true) {
-            System.out.print("Số khách mới: ");
-            String numStr = sc.nextLine().trim();
-            if (numStr.isEmpty()) break; 
-            try {
-                int n = Integer.parseInt(numStr);
-                Homestay hs = hsManager.searchHomestayById(t.getHomeID()); 
-                if (n > 0 && hs != null && n <= hs.getMaximumcapacity()) {
-                    t.setNumber_Tourist(n);
-                    break;
-                } else {
-                    System.out.println("-> Lỗi: Quá sức chứa của Homestay (" + hs.getMaximumcapacity() + " khách)!");
-                }
-            } catch (Exception e) { System.out.println("-> Lỗi định dạng số!"); }
-        }
-
-        // 9. Cập nhật trạng thái Booking
-        System.out.print("Trạng thái Booking cũ: " + t.isBooking()+ " -> Đổi thành (true/false): ");
-        String bStatus = sc.nextLine().trim();
-        if (!bStatus.isEmpty())
-            t.setBooking(Boolean.parseBoolean(bStatus));
-
-        System.out.println("\nThành công: Đã cập nhật Tour [" + tourID + "]!");
+               Homestay hs = hsManager.searchHomestayById(HomeID);
+               if (hs == null) {
+                   System.out.println("ko tim thay homestay");
+               } else {
+                   t.setHomeID(HomeID);
+                   flag = true;
+               }
+           }
+           
+           
+           t.setDeparture_date(getNewData("departure_date: ", t.getDeparture_date()));
+           t.setEnd_date(getNewData("end_date: ", t.getEnd_date()));
+        
+           boolean flag3 = false;
+           while (flag == false) {
+               System.out.print("number_Tourist: ");
+               String number_Tourist = sc.nextLine();
+               if (number_Tourist.isEmpty()) {
+                   break;
+               }
+               try {
+                   int n = Integer.parseInt(number_Tourist);
+                   Homestay hs = hsManager.searchHomestayById(t.getHomeID());
+                   if (n> hs.getMaximumcapacity()) {
+                       System.out.println("Qua suc chua");
+                   } else {
+                       t.setNumber_Tourist(n);
+                       flag = true;
+                   }
+               } catch (Exception e) {
+                   System.out.println("Lổi định dang");
+               }
+           }
+           
+           System.out.println("trạng thái booking cũ" + t.isBooking() +"-> update (true/false):");
+           String chance = sc.nextLine();
+           if(!chance.isEmpty()) t.setBooking(Boolean.parseBoolean(chance));
+           System.out.println("update thanh cong");
+           
     }
     
+       
+       public String getNewData(String mess, String OldData){
+           System.out.print(mess);
+           String newData = sc.nextLine();
+           
+           return newData.isEmpty()? OldData : newData;
+       }
     
     public void listToursDepartureEarlier() {
-        System.out.println("\n--- TOURS DEPARTURE EARLIER THAN " + LocalDate.now() + " ---");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        System.out.println("Tour trước giờ hiện tại (" + LocalDate.now() + ")");
+        DateTimeFormatter fm = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate currentDate = LocalDate.now();
-        boolean found = false;
-
+        boolean flag = false;
+        System.out.println(TABLE_HEADER);
         for (Tour t : this) {
             try {
-                // Dọn dẹp chuỗi ngày: Chỉ giữ lại số và dấu gạch chéo 
-                String cleanDate = t.getDeparture_date().trim().replaceAll("[^0-9/]", "");
-                LocalDate depDate = LocalDate.parse(cleanDate, formatter);
-                
-                if (depDate.isBefore(currentDate)) {
+                LocalDate depDate = LocalDate.parse(t.getDeparture_date().trim(),fm);
+                if (depDate.isAfter(currentDate)) {
                     System.out.println(t.toString());
-                    found = true;
+                    flag = true;
                 }
             } catch (Exception e) {
-                // In lỗi ra để debug nếu ngày vẫn bị sai định dạng
-                System.err.println("Lỗi parse ngày tại Tour " + t.getTourID() + ": " + t.getDeparture_date());
+                System.out.println(" lỗi " +t.getDeparture_date());
             }
+
         }
-        if (!found) System.out.println("No tours found earlier than current date!");
+
+        if (!flag) {
+            System.out.println("ko co tour nao truoc ngay hien tai");
+        }
+
     }
     
 
-    // --- CASE 4: Lọc Tour khởi hành SAU ngày hiện tại & Sắp xếp giảm dần ---
+    // --- CASE 4: Lọc Tour khởi hành SAU ngày hiện tại và Sắp xếp giảm dần ---
     public void listToursDepartureLaterAndSort() {
         System.out.println("\n--- DANH SÁCH TOUR KHỞI HÀNH SAU NGÀY HIỆN TẠI (SORTED BY TOTAL AMOUNT) ---");
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -285,7 +287,7 @@ public class TourManager extends ArrayList<Tour> {
         // In kết quả
         for (Tour t : futureTours) {
             double totalAmount = t.getPrice() * t.getNumber_Tourist();
-            System.out.println(t.toString() + " | Total Amount: " + totalAmount);
+            System.out.println(t.toString() + " Total Amount: " + totalAmount);
         }
     }
     
@@ -304,5 +306,7 @@ public class TourManager extends ArrayList<Tour> {
             System.err.println("-> Lỗi không thể lưu file Tour!");
         }
     }
+
+ 
     
 }

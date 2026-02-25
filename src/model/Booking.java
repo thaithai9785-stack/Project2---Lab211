@@ -2,11 +2,11 @@
 package model;
 
 public class Booking {
-    public String bookingID;
-    public String fullName;
-    public String tourID;
-    public String bookingDate;
-    public String phone;
+    private String bookingID;
+    private String fullName;
+    private String tourID;
+    private String bookingDate;
+    private String phone;
 
     public Booking() {
     }

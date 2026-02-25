@@ -85,26 +85,7 @@ public class Inputter {
 
     
   
-    public Tour getTourInfo() {
-        Tour x = new Tour();
-      
-        x.setTourID(inputAndLoop("Input Tour ID (ex: T00001): ", Acceptable.TOUR_ID_VALID, true));
-        x.setTourName(inputAndLoop("Input Tour Name: ", Acceptable.NAME_VALID, true));
-        x.setTime(inputAndLoop("Input Time (ex: 3 Days): ", Acceptable.TIME_VALID, true));
-        
-        // 2. Nhập số: Dùng INTEGER_VALID như đề yêu cầu
-        String priceStr = inputAndLoop("Input Price (Positive Integer): ", Acceptable.INTEGER_VALID, true);
-        x.setPrice(Double.parseDouble(priceStr));
-        
-        x.setHomeID(inputAndLoop("Input Homestay ID (ex: HS0001): ", Acceptable.HOMESTAY_ID_VALID, true));
-        x.setDeparture_date(inputAndLoop("Input Departure Date (dd/mm/yyyy): ", Acceptable.DATE_VALID, true));
-        x.setEnd_date(inputAndLoop("Input End Date (dd/mm/yyyy): ", Acceptable.DATE_VALID, true));
-        
-        // 3. Nhập số lượng khách
-        String numStr = inputAndLoop("Input Number of Tourists: ", Acceptable.INTEGER_VALID, true);
-        x.setNumber_Tourist(Integer.parseInt(numStr));
-        return x;
-    }
+   
     
     public Booking getBookingInfo() {
         Booking b = new Booking();
@@ -115,6 +96,21 @@ public class Inputter {
         b.setPhone(inputAndLoop("Input Phone Number (10 digits): ", Acceptable.PHONE_VALID, true));
         
         return b;
+    }
+
+    public Tour getTourInfo() {
+        Tour x = new Tour();
+        x.setTourID(inputAndLoop("TourID: ", Acceptable.TOUR_ID_VALID, true));
+        x.setTime(inputAndLoop("Time: ", Acceptable.TIME_VALID, true));
+        
+        x.setPrice(Double.parseDouble(inputAndLoop("price: ", Acceptable.INTEGER_VALID, true)));
+        x.setHomeID(inputAndLoop("Home ID", Acceptable.HOMESTAY_ID_VALID, true));
+        x.setDeparture_date(inputAndLoop("Departure date: ", Acceptable.DATE_VALID, true));
+        x.setEnd_date(inputAndLoop("End date:", Acceptable.DATE_VALID, true));
+        x.setNumber_Tourist(Integer.parseInt(inputAndLoop("Number tourist", Acceptable.INTEGER_VALID, true)));
+        
+        return x;
+        
     }
     
 }

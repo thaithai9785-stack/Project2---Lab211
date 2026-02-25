@@ -2,15 +2,15 @@
 package model;
 
 public class Tour {
-    public String tourID;
-    public String tourName;
-    public String time;
-    public double price;
-    public String homeID;
-    public String departure_date;
-    public String end_date;
-    public int number_Tourist;
-    public boolean booking;
+    private String tourID;
+    private String tourName;
+    private String time;
+    private double price;
+    private String homeID;
+    private String departure_date;
+    private String end_date;
+    private int number_Tourist;
+    private boolean booking;
 
     public Tour() {
     }
@@ -105,4 +105,7 @@ public class Tour {
         return String.format("| %-6s | %-15s | %-15s | %10.0f | %-6s | %-10s | %-10s | %2d | %-5s |",
                 tourID, tourName, time, price, homeID, departure_date, end_date, number_Tourist, booking);
     }
+    
+
+    
 }

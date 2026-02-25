@@ -38,14 +38,12 @@ public class Main {
         switch (choice) {
                 case 1:
                     Tour x = ndl.getTourInfo();
-                    tourManager.addNew(x); 
+                    tourManager.addNew(x);
                     break;
                 case 2:
-                    System.out.println("\n--- 2. UPDATE A TOUR BY ID ---");
-                    System.out.print("Nhập mã Tour cần cập nhật (vd: T00001): ");
-                    String idToUpdate = sc.nextLine().trim();
-
-                    tourManager.updateTourById(idToUpdate); 
+                    System.out.println("Inter TourId to update:");
+                    String id = sc.nextLine();
+                    tourManager.UpdateByTourId(id);
                     break;
                 case 3:
                     tourManager.listToursDepartureEarlier();

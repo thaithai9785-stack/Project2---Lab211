@@ -2,11 +2,11 @@
 package model;
 
 public class Homestay {
-    public String homeID;
-    public String homeName;
-    public int roomNumber;
-    public String address;
-    public int maximumCapacity;
+    private String homeID;
+    private String homeName;
+    private int roomNumber;
+    private String address;
+    private int maximumCapacity;
 
     public Homestay() {
     }
