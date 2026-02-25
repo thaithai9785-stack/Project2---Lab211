@@ -225,7 +225,7 @@ public class BookingManager extends ArrayList<Booking> {
     }
     
     
-    // --- CASE 9: THỐNG KÊ SỐ LƯỢNG KHÁCH THEO HOMESTAY ---
+  
     public void printStatistics1(HomestayManager hsManager, TourManager tourManager) {
         System.out.println("\n--- THỐNG KÊ SỐ LƯỢNG KHÁCH THEO HOMESTAY ---");
         System.out.printf("| %-30s | %-15s |\n", "Tên Homestay", "Tổng số khách");
@@ -271,8 +271,8 @@ public class BookingManager extends ArrayList<Booking> {
     }
     
 
+    
     // --- CASE 9: THỐNG KÊ SỐ LƯỢNG KHÁCH THEO HOMESTAY ---
-
     public void printStatistics(HomestayManager hsManager, TourManager tourManager) {
         System.out.println("\n--- THỐNG KÊ SỐ LƯỢNG KHÁCH THEO HOMESTAY ---");
         System.out.printf("| %-30s | %-15s |\n", "HomeName", "Number_Tourist");

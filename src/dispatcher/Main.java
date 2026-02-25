@@ -72,7 +72,7 @@ public class Main {
                     bookingManager.listBookingsByName(searchName);
                     break;
                 case 9:
-                    bookingManager.printStatistics1(hsManager, tourManager); 
+                    bookingManager.printStatistics(hsManager, tourManager); 
                     break;
                 case 10:
                     System.out.print("\nBạn có muốn lưu mọi thay đổi vào file trước khi thoát không? (Y/N): ");
