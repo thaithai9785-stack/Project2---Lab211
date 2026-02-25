@@ -56,16 +56,14 @@ public class Main {
                     bookingManager.addNewBooking(b);
                     break;
                 case 6:
-                    System.out.println("\n--- 6. REMOVE A BOOKING ---");
-                    System.out.print("Nhập mã Booking cần xóa (vd: B00001): ");
-                    String removeId = sc.nextLine().trim();
-                    bookingManager.removeBookingById(removeId);
+                    System.out.println("Enter bookingID to remove: ");
+                    String removeID = sc.nextLine();
+                    bookingManager.removeBookingById(removeID);
                     break;
                 case 7:
-                    System.out.println("\n--- 7. UPDATE A BOOKING ---");
-                    System.out.print("Nhập mã Booking cần cập nhật (vd: B00001): ");
-                    String updateBkId = sc.nextLine().trim();
-                    bookingManager.updateBookingById(updateBkId);
+                    System.out.println("Enter bookingID to update:");
+                    String UpdateID = sc.nextLine();
+                    bookingManager.updateBookingById(UpdateID);
                     break;
                 case 8:
                     System.out.println("\n--- 8. LIST BOOKINGS BY NAME ---");
@@ -74,7 +72,7 @@ public class Main {
                     bookingManager.listBookingsByName(searchName);
                     break;
                 case 9:
-                    bookingManager.printStatistics(hsManager, tourManager); 
+                    bookingManager.printStatistics1(hsManager, tourManager); 
                     break;
                 case 10:
                     System.out.print("\nBạn có muốn lưu mọi thay đổi vào file trước khi thoát không? (Y/N): ");

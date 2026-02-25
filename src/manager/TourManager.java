@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.Buffer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -142,6 +143,7 @@ public class TourManager extends ArrayList<Tour> {
            
            System.out.println("Update:");
            System.out.println("(ko muốn update, enter lần nữa)");
+           
            t.setTourName(getNewData("Tour Name: ", t.getTourName()));
            t.setTime(getNewData("time: ", t.getTime()));
            
@@ -295,7 +297,7 @@ public class TourManager extends ArrayList<Tour> {
  
     // --- LƯU DỮ LIỆU TOUR XUỐNG FILE ---
     public void saveToFile() {
-        try (java.io.PrintWriter pw = new java.io.PrintWriter(new java.io.File(pathFile))) {
+        try (PrintWriter pw = new PrintWriter(new java.io.File(pathFile))) {
             for (Tour t : this) {
                 // Nối các thuộc tính bằng dấu phẩy giống hệt cấu trúc lúc đọc file
                 pw.println(t.getTourID() + "," + t.getTourName() + "," + t.getTime() + "," +
@@ -309,5 +311,16 @@ public class TourManager extends ArrayList<Tour> {
     }
 
  
+    
+    
+//     Sắp xếp giỏ phụ GIẢM DẦN theo Total Amount (Giá x Số lượng khách)
+//        Collections.sort(futureTours, new Comparator<Tour>() {
+//            @Override
+//            public int compare(Tour t1, Tour t2) {
+//                double total1 = t1.getPrice() * t1.getNumber_Tourist();
+//                double total2 = t2.getPrice() * t2.getNumber_Tourist();
+//                return Double.compare(total2, total1); // t2 đứng trước t1 để xếp giảm dần
+//            }
+//        });
     
 }
