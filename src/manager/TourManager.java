@@ -236,7 +236,7 @@ public class TourManager extends ArrayList<Tour> {
         for (Tour t : this) {
             try {
                 LocalDate depDate = LocalDate.parse(t.getDeparture_date().trim(),fm);
-                if (depDate.isAfter(currentDate)) {
+                if (depDate.isBefore(currentDate)) {
                     System.out.println(t.toString());
                     flag = true;
                 }
@@ -297,9 +297,8 @@ public class TourManager extends ArrayList<Tour> {
  
     // --- LƯU DỮ LIỆU TOUR XUỐNG FILE ---
     public void saveToFile() {
-        try (PrintWriter pw = new PrintWriter(new java.io.File(pathFile))) {
+        try (PrintWriter pw = new PrintWriter(new File(pathFile))) {
             for (Tour t : this) {
-                // Nối các thuộc tính bằng dấu phẩy giống hệt cấu trúc lúc đọc file
                 pw.println(t.getTourID() + "," + t.getTourName() + "," + t.getTime() + "," +
                            t.getPrice() + "," + t.getHomeID() + "," + t.getDeparture_date() + "," +
                            t.getEnd_date() + "," + t.getNumber_Tourist() + "," + t.isBooking());
@@ -311,6 +310,11 @@ public class TourManager extends ArrayList<Tour> {
     }
 
  
+    
+  
+    
+    
+    
     
     
 //     Sắp xếp giỏ phụ GIẢM DẦN theo Total Amount (Giá x Số lượng khách)

@@ -95,15 +95,13 @@ public class BookingManager extends ArrayList<Booking> {
         
         DateTimeFormatter fm = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         
-       
             LocalDate depDate = LocalDate.parse(t.getDeparture_date(), fm);
             LocalDate bookDate = LocalDate.parse(b.getBooking_date(), fm);
             if (bookDate.isAfter(depDate)) {
                 System.out.println("ngay dat phai truoc ngay khoi hanh");
                 return;
             }
-     
-       
+            
         t.setBooking(true);
         this.add(b);
         System.out.println("add thanh cong");
@@ -164,7 +162,6 @@ public class BookingManager extends ArrayList<Booking> {
             }
         }
         
-        
         boolean flag = false;
         while (!flag) {
             String newDate = sc.nextLine();
@@ -209,7 +206,6 @@ public class BookingManager extends ArrayList<Booking> {
     public void listBookingsByName(String searchName) {
         System.out.println("\n--- KẾT QUẢ TÌM KIẾM BOOKING CHO: '" + searchName + "' ---");
         boolean found = false;
-        // Đổi chuỗi tìm kiếm về chữ thường để không phân biệt hoa thường (vd: "binh" vẫn tìm ra "Binh")
         String searchLower = searchName.trim().toLowerCase();
         
         for (Booking b : this) {
@@ -248,8 +244,7 @@ public class BookingManager extends ArrayList<Booking> {
                     // 3. Quét kho Booking: Đếm xem có bao nhiêu Booking đặt cái Tour này
                     for (Booking b : this) {
                         String bTourId = b.getTourID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-                        
-                        // Y HỆT LOGIC CỦA BẠN: Cứ khớp 1 Booking là cộng số khách của Tour đó 1 lần
+
                         if (bTourId.equals(tourId)) {
                             totalTourists += t.getNumber_Tourist();
                         }
@@ -257,7 +252,6 @@ public class BookingManager extends ArrayList<Booking> {
                 }
             }
 
-            // 4. In ra nếu Homestay có khách
             if (totalTourists > 0) {
                 System.out.printf("| %-30s | %-15d |\n", hs.getHomeName(), totalTourists);
                 hasData = true;
@@ -283,7 +277,6 @@ public class BookingManager extends ArrayList<Booking> {
         // Quét từng Homestay
         for (Homestay hs : hsManager) {
             int totalTourists = 0;
-            // XÓA SẠCH mọi thứ không phải chữ và số, ép về chữ thường
             String currentHsId = hs.getHomeID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase(); 
 
             // Quét từng Booking
@@ -295,14 +288,13 @@ public class BookingManager extends ArrayList<Booking> {
                     String tourId = t.getTourID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
                     String tourHomeId = t.getHomeID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
 
-                    // Khớp mã tuyệt đối
                     if (tourId.equals(bookingTourId) && tourHomeId.equals(currentHsId)) {
                         totalTourists += t.getNumber_Tourist();
                     }
                 }
             }
 
-            // In ra bảng nếu có khách
+
             if (totalTourists > 0) {
                 System.out.printf("| %-30s | %-15d |\n", hs.getHomeName(), totalTourists);
                 hasData = true;
@@ -318,8 +310,7 @@ public class BookingManager extends ArrayList<Booking> {
     
     // --- LƯU DỮ LIỆU BOOKING XUỐNG FILE ---
     public void saveToFile() {
-        // Giả sử đường dẫn file Booking của bạn là "Bookings.txt"
-        try (PrintWriter pw = new PrintWriter(new java.io.File("Bookings.txt"))) {
+        try (PrintWriter pw = new PrintWriter(new File("Bookings.txt"))) {
             for (Booking b : this) {
                 pw.println(b.getBookingID() + "," + b.getFullName() + "," + 
                            b.getTourID() + "," + b.getBooking_date() + "," + b.getPhone());
@@ -329,6 +320,28 @@ public class BookingManager extends ArrayList<Booking> {
             System.err.println("-> Lỗi không thể lưu file Booking!");
         }
     }
+    
+    
+    
+    
+    
+    
+    
+//     boolean check = false;
+//        for (Booking b : this) {
+//            if(b.getTourID().equalsIgnoreCase(tourID)){
+//                check = true;
+//                break;
+//            }
+//        }
+//        
+//        if(!check){
+//            Tour t = tourManager.searchTourById(tourID);
+//            if(t!=null)
+//            t.setBooking(false);
+//        }
+    
+    
     
     
 //     Tour targetTour = tourManager.searchTourById(b.getBookingID());

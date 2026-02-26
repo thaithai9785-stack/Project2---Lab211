@@ -66,8 +66,7 @@ public class Main {
                     bookingManager.updateBookingById(UpdateID);
                     break;
                 case 8:
-                    System.out.println("\n--- 8. LIST BOOKINGS BY NAME ---");
-                    System.out.print("Nhập tên khách hàng cần tìm (VD: Binh): ");
+                    System.out.print("Nhập tên khách hàng cần tìm: ");
                     String searchName = sc.nextLine().trim();
                     bookingManager.listBookingsByName(searchName);
                     break;
@@ -77,12 +76,10 @@ public class Main {
                 case 10:
                     System.out.print("\nBạn có muốn lưu mọi thay đổi vào file trước khi thoát không? (Y/N): ");
                     String confirm = sc.nextLine().trim();
-                    
                     if (confirm.equalsIgnoreCase("Y")) {
                         tourManager.saveToFile();
                         bookingManager.saveToFile();
                     }
-                    
                     System.out.println("\nCảm ơn bạn đã sử dụng hệ thống HOMESTAY BOOKING MANAGEMENT. Tạm biệt!");
                     break;
                 default:
