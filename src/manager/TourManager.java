@@ -213,14 +213,16 @@ public class TourManager extends ArrayList<Tour> {
         System.out.println("Tour trước giờ hiện tại (" + LocalDate.now() + ")");
         DateTimeFormatter fm = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate currentDate = LocalDate.now();
-        boolean flag = false;
+        
+        boolean found = false;
+        
         System.out.println(TABLE_HEADER);
         for (Tour t : this) {
             try {
                 LocalDate depDate = LocalDate.parse(t.getDeparture_date().trim(),fm);
                 if (depDate.isBefore(currentDate)) {
                     System.out.println(t.toString());
-                    flag = true;
+                    found = true;
                 }
             } catch (Exception e) {
                 System.out.println(" lỗi " +t.getDeparture_date());
@@ -228,7 +230,7 @@ public class TourManager extends ArrayList<Tour> {
 
         }
 
-        if (!flag) {
+        if (!found) {
             System.out.println("ko co tour nao truoc ngay hien tai");
         }
 
@@ -241,13 +243,12 @@ public class TourManager extends ArrayList<Tour> {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate currentDate = LocalDate.now();
         
-        // Tạo một giỏ phụ để chứa các Tour thỏa mãn điều kiện
         List<Tour> futureTours = new ArrayList<>();
 
         for (Tour t : this) {
             try {
                 LocalDate depDate = LocalDate.parse(t.getDeparture_date(), formatter);
-                if (depDate.isAfter(currentDate)) { // So sánh SAU (Later)
+                if (depDate.isAfter(currentDate)) { 
                     futureTours.add(t);
                 }
             } catch (Exception e) {}
@@ -258,20 +259,12 @@ public class TourManager extends ArrayList<Tour> {
             return;
         }
 
-        // Sắp xếp giỏ phụ GIẢM DẦN theo Total Amount (Giá x Số lượng khách)
-        Collections.sort(futureTours, new Comparator<Tour>() {
-            @Override
-            public int compare(Tour t1, Tour t2) {
-                double total1 = t1.getPrice() * t1.getNumber_Tourist();
-                double total2 = t2.getPrice() * t2.getNumber_Tourist();
-                return Double.compare(total2, total1); // t2 đứng trước t1 để xếp giảm dần
-            }
-        });
+        futureTours.sort((t1,t2)->Double.compare(t2.getTotalAmount(), t1.getTotalAmount()));
 
         // In kết quả
+        System.out.println(TABLE_HEADER);
         for (Tour t : futureTours) {
-            double totalAmount = t.getPrice() * t.getNumber_Tourist();
-            System.out.println(t.toString() + " Total Amount: " + totalAmount);
+            System.out.println(t.toString() + " Total Amount: " + t.getTotalAmount());
         }
     }
 

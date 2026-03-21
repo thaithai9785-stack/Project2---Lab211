@@ -141,4 +141,18 @@ public class Inputter {
         }
 
     }
+    
+    
+    public boolean isDateBefore(String date1Str, String date2Str) {
+        try {
+            DateTimeFormatter fm = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate d1 = LocalDate.parse(date1Str.trim(), fm);
+            LocalDate d2 = LocalDate.parse(date2Str.trim(), fm);
+            
+            return d1.isBefore(d2); 
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
 }

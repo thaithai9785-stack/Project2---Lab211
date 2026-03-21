@@ -98,6 +98,10 @@ public class Tour {
     public void setBooking(boolean booking) {
         this.booking = booking;
     }
+    
+    public double getTotalAmount() {
+        return this.price * this.number_Tourist;
+    }
 
 
     @Override

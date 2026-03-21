@@ -86,35 +86,34 @@ public class BookingManager extends ArrayList<Booking> {
     // 3. THÊM BOOKING MỚI 
     public void addNewBooking() {
         Booking b = ndl.getBookingInfo();
-        if(searchBookingById(b.getBookingID())!=null){
+        if (searchBookingById(b.getBookingID()) != null) {
             System.out.println("Booking đã tồn tại");
             return;
         }
-        
+
         Tour t = tourManager.searchTourById(b.getTourID());
-        if(t== null){
-            System.out.println("Tour đã tồn tại");
+        if (t == null) {
+            System.out.println("Tour không tồn tại");
             return;
         }
-        
-        DateTimeFormatter fm = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        
-            LocalDate depDate = LocalDate.parse(t.getDeparture_date(), fm);
-            LocalDate bookDate = LocalDate.parse(b.getBooking_date(), fm);
-            if (bookDate.isAfter(depDate)) {
-                System.out.println("ngay dat phai truoc ngay khoi hanh");
-                return;
-            }
-            
+
+        // Gọi thẳng trọng tài ra phán xử:
+        if (!ndl.isDateBefore(b.getBooking_date(), t.getDeparture_date())) {
+            System.out.println("-> LỖI: Ngày đặt phòng phải TRƯỚC ngày khởi hành!");
+            return;
+        }
+
         t.setBooking(true);
         this.add(b);
         System.out.println("add thanh cong");
-        
+
     }
-    
+
     // --- CASE 6: XÓA BOOKING ---
-    public void removeBookingById(String bookingID) {
-        Booking bID = searchBookingById(bookingID);
+    public void removeBookingById() {
+        String targetID = ndl.getString("Nhập Booking ID cần xóa: ");
+        Booking bID = searchBookingById(targetID);
+        
         if(bID == null){
             System.out.println("ko tim thay booking");
             return;
@@ -142,66 +141,53 @@ public class BookingManager extends ArrayList<Booking> {
     }
 
     // --- CASE 7: CẬP NHẬT BOOKING ---
-    public void updateBookingById(String bookingID) {
-       Booking b = searchBookingById(bookingID);
-       if(b==null){
-           System.out.println("ko tim thay booking id");
-           return;
-       }
-       
+    public void updateBookingById() {
+        String id = ndl.getString("Booking ID :");
+        Booking b = searchBookingById(id);
+        if (b == null) {
+            System.out.println("ko tim thay booking id");
+            return;
+        }
+
         System.out.println("update:");
         b.setFullName(UpdateDataBooking("Name: ", b.getFullName()));
-        
-        Tour targetTour = tourManager.searchTourById(b.getBookingID());
-        System.out.print("Tour ID: ");
-        String tourID= sc.nextLine();
-        if(!tourID.isEmpty()){
-            Tour t = tourManager.searchTourById(tourID);
-            if(t==null)
-                System.out.println("ko tim thay tour");
-            else{
-                b.setTourID(tourID);
-                targetTour = t;
-                t.setBooking(true);
-            }
-        }
-        
-        boolean flag = false;
-        while (!flag) {
-            String newDate = sc.nextLine();
-            if (newDate.isEmpty()) {
-                flag = true;
-            } 
-            else {
-                try {
-                    DateTimeFormatter fm = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDate bookDate = LocalDate.parse(newDate);
-                    LocalDate depDate = LocalDate.parse(targetTour.getDeparture_date());
-                    if (bookDate.isAfter(depDate)) {
-                        System.out.println("phai nhap ngay truoc depDate");
-                    } else {
-                        b.setBookingID(newDate);
-                        flag = true;
-                    }
-                } catch (Exception e) {
-                    System.out.println("Loi dinh dang");
+
+        while (true) {
+            String newTourID = UpdateDataBooking("Tour ID mới [" + b.getTourID() + "]: ", b.getTourID());
+            Tour t = tourManager.searchTourById(newTourID);
+
+            if (t != null) {
+                if (!newTourID.equalsIgnoreCase(b.getTourID())) {
+                    b.setTourID(newTourID);
+                    t.setBooking(true);
                 }
+                break;
+            } else {
+                System.out.println("Tour này không tồn tại trong hệ thống!");
             }
-            
-            b.setPhone(UpdateDataBooking("Phone", b.getPhone()));
-            System.out.println("Thanh cong");
-            
         }
-        
-        
-        
+
+        Tour targetTour = tourManager.searchTourById(b.getTourID());
+        while (true) {
+            String newDate = UpdateDataBooking("Booking Date mới [" + b.getBooking_date() + "] (dd/MM/yyyy): ", b.getBooking_date());
+            if (ndl.isDateBefore(newDate, targetTour.getDeparture_date())) {
+                b.setBooking_date(newDate);
+                break;
+            } else {
+                System.out.println("Ngày đặt phòng phải TRƯỚC ngày khởi hành (" + targetTour.getDeparture_date() + ")!");
+            }
+        }
+
+        b.setPhone(UpdateDataBooking("Phone mới [" + b.getPhone() + "]: ", b.getPhone()));
+
+        System.out.println("-> Cập nhật Booking thành công!");
+
     }
         
     
     
     public String UpdateDataBooking(String mess, String oldData){
-        System.out.print(mess);
-        String newData = sc.nextLine();
+        String newData = ndl.getString(mess);
         return newData.isEmpty()? oldData:newData;
     }
     

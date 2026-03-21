@@ -52,14 +52,10 @@ public class Main {
                     bookingManager.addNewBooking();
                     break;
                 case 6:
-                    System.out.println("Enter bookingID to remove: ");
-                    String removeID = sc.nextLine();
-                    bookingManager.removeBookingById(removeID);
+                    bookingManager.removeBookingById();
                     break;
                 case 7:
-                    System.out.println("Enter bookingID to update:");
-                    String UpdateID = sc.nextLine();
-                    bookingManager.updateBookingById(UpdateID);
+                    bookingManager.updateBookingById();
                     break;
                 case 8:
                     System.out.print("Nhập tên khách hàng cần tìm: ");
