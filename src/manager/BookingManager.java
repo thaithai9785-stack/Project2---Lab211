@@ -15,16 +15,19 @@ import java.util.logging.Logger;
 import model.Booking;
 import model.Homestay;
 import model.Tour;
+import tools.Inputter;
 
 public class BookingManager extends ArrayList<Booking> {
     Scanner sc = new Scanner(System.in);
+    private Inputter ndl;
     private String pathFile = "./Bookings.txt";
     
     private TourManager tourManager; 
 
-    public BookingManager(TourManager tourManager) {
+    public BookingManager(Inputter ndl,TourManager tourManager) {
         super();
         this.tourManager = tourManager;
+        this.ndl = ndl;
         this.readFromFile();
     }
 
@@ -81,7 +84,8 @@ public class BookingManager extends ArrayList<Booking> {
     }
 
     // 3. THÊM BOOKING MỚI 
-    public void addNewBooking(Booking b) {
+    public void addNewBooking() {
+        Booking b = ndl.getBookingInfo();
         if(searchBookingById(b.getBookingID())!=null){
             System.out.println("Booking đã tồn tại");
             return;

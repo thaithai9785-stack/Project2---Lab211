@@ -1,4 +1,3 @@
-
 package tools;
 
 import java.text.ParseException;
@@ -18,7 +17,6 @@ public class Inputter {
 
     private Scanner ndl;
 
-    
     public Inputter() {
         this.ndl = new Scanner(System.in);
     }
@@ -27,26 +25,27 @@ public class Inputter {
         return ndl;
     }
 
-    public String getString(String mess){
+    public String getString(String mess) {
         System.out.print(mess);
         return this.ndl.nextLine();
-      
+
     }
-    
+
     //Kiểm tra dữ liệu nhập vào có hợp lệ hay không
-    public String inputAndLoop(String mess, String pattern, boolean isLoop){
+    public String inputAndLoop(String mess, String pattern, boolean isLoop) {
         boolean more = true;
-        String result="";
-        do{
+        String result = "";
+        do {
             result = getString(mess);
             more = !Acceptable.isValid(result, pattern);
-            
-            if(more)
+
+            if (more) {
                 System.out.println("Data is incorrect!");
-        } while(more && isLoop);
+            }
+        } while (more && isLoop);
         return result;
     }
-    
+
     public int getInt(String mess) {
         int kq = 0;
         String tam = getString(mess);
@@ -58,12 +57,13 @@ public class Inputter {
 
     public double getDouble(String mess) {
         String tam = getString(mess);
-        double kq=0;
-        if (Acceptable.isValid(tam, Acceptable.DOUBLE_VALID))
+        double kq = 0;
+        if (Acceptable.isValid(tam, Acceptable.DOUBLE_VALID)) {
             kq = Double.parseDouble(tam);
+        }
         return kq;
     }
-    
+
     public String inputDate(String mess) {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -83,34 +83,62 @@ public class Inputter {
         }
     }
 
-    
-  
-   
-    
     public Booking getBookingInfo() {
         Booking b = new Booking();
         b.setBookingID(inputAndLoop("Input Booking ID (ex: B00001): ", Acceptable.BOOKING_ID_VALID, true));
         b.setFullName(inputAndLoop("Input Full Name: ", Acceptable.NAME_VALID, true));
         b.setTourID(inputAndLoop("Input Tour ID to book (ex: T00001): ", Acceptable.TOUR_ID_VALID, true));
-        b.setBooking_date(inputAndLoop("Input Booking Date (dd/mm/yyyy): ", Acceptable.DATE_VALID, true));      
+        b.setBooking_date(inputDate("Input Booking Date (dd/MM/yyyy): "));
         b.setPhone(inputAndLoop("Input Phone Number (10 digits): ", Acceptable.PHONE_VALID, true));
-        
+
         return b;
     }
 
     public Tour getTourInfo() {
         Tour x = new Tour();
+        
         x.setTourID(inputAndLoop("TourID: ", Acceptable.TOUR_ID_VALID, true));
         x.setTime(inputAndLoop("Time: ", Acceptable.TIME_VALID, true));
-        
         x.setPrice(Double.parseDouble(inputAndLoop("price: ", Acceptable.INTEGER_VALID, true)));
-        x.setHomeID(inputAndLoop("Home ID", Acceptable.HOMESTAY_ID_VALID, true));
-        x.setDeparture_date(inputAndLoop("Departure date: ", Acceptable.DATE_VALID, true));
-        x.setEnd_date(inputAndLoop("End date:", Acceptable.DATE_VALID, true));
+        x.setHomeID(inputAndLoop("Home ID: ", Acceptable.HOMESTAY_ID_VALID, true));
+        
+        String depDate = inputDate("Departure date (dd/MM/yyyy): ");
+        x.setDeparture_date(depDate);
+        while (true) {
+            String endDate = inputDate("End date (dd/MM/yyyy): ");
+            
+            if (isValidDateRange(depDate, endDate)) {
+                x.setEnd_date(endDate);
+                break; 
+            } else {
+                System.out.println("-> LỖI: Ngày kết thúc phải diễn ra CÙNG NGÀY hoặc SAU ngày khởi hành!");
+            }
+        }
+
         x.setNumber_Tourist(Integer.parseInt(inputAndLoop("Number tourist", Acceptable.INTEGER_VALID, true)));
-        
+
         return x;
-        
+
     }
-    
+
+    public boolean isValidDateRange(String startDateStr, String endDateStr) {
+        try {
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+
+            LocalDate startDate = LocalDate.parse(startDateStr, formatter);
+            LocalDate endDate = LocalDate.parse(endDateStr, formatter);
+
+
+            if (endDate.isBefore(startDate)) {
+                return false;
+            }
+            return true; 
+        } catch (Exception e) {
+            System.out.println("-> LỖI: Định dạng ngày không hợp lệ. Vui lòng dùng dd/MM/yyyy.");
+            return false;
+        }
+
+    }
 }

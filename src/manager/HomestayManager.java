@@ -55,7 +55,7 @@ public class HomestayManager extends ArrayList<Homestay> {
         try {
             String[] parts = line.split("-");
             if (parts.length >= 5) {
-                String id = parts[0].trim();
+                String id = parts[0].replaceAll("[^a-zA-Z0-9]", "");
                 String name = parts[1].trim();
 
                 int rooms = Integer.parseInt(parts[2].trim().replaceAll("[^0-9]", ""));
@@ -76,18 +76,15 @@ public class HomestayManager extends ArrayList<Homestay> {
         return null; // Trả về null nếu dòng dữ liệu bị lỗi
     }
 
-   public Homestay searchHomestayById(String id) {
+   public Homestay searchHomestayById1(String id) {
         if (id == null) return null;
         
-        // 1. Quét sạch mọi ký tự lạ của ID người dùng nhập vào
         String cleanInputId = id.replaceAll("[^a-zA-Z0-9]", "");
 
         for (Homestay h : this) {
             if (h.getHomeID() != null) {
-                // 2. Quét sạch mọi ký tự lạ của ID lấy từ list
                 String cleanListId = h.getHomeID().replaceAll("[^a-zA-Z0-9]", "");
                 
-                // 3. Đem so sánh 2 chuỗi đã "sạch bong"
                 if (cleanListId.equalsIgnoreCase(cleanInputId)) {
                     return h;
                 }
@@ -95,4 +92,15 @@ public class HomestayManager extends ArrayList<Homestay> {
         }
         return null;
     }
+   
+   public Homestay searchHomestayById(String id){
+       for (Homestay h : this) {
+           if(h.getHomeID().trim().equalsIgnoreCase(id.trim())){
+            return h;
+           }
+       }
+       return null;
+   }
+   
+   
 }

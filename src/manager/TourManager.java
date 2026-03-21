@@ -20,18 +20,21 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Homestay;
 import model.Tour;
+import tools.Inputter;
 
 public class TourManager extends ArrayList<Tour> {
     Scanner sc = new Scanner(System.in);
+    private Inputter ndl;
     private HomestayManager hsManager;
     private String pathFile;
     private final String TABLE_HEADER = ("|------------------------------------------------------------------|\n"
                 + "| ID     | Tên Tour        | Thời gian       | Giá        | HomeID | Ngày đi    | Ngày về   |SL |Booking|\n"
                 + "|--------|-----------------|-----------------|------------|--------|------------|-----------|---|-------|");
    
-    public TourManager(HomestayManager hsManager) {
+    public TourManager(Inputter ndl, HomestayManager hsManager) {
         super();
         this.hsManager = hsManager;
+        this.ndl = ndl;
         this.pathFile = "./Tours.txt";
         this.readFromFile();
 
@@ -107,13 +110,14 @@ public class TourManager extends ArrayList<Tour> {
     
     public Tour searchTourById(String id) {
         for (Tour t : this) {
-            if(t.getTourID().equalsIgnoreCase(id))
+            if(t.getTourID().trim().equalsIgnoreCase(id.trim()))
                 return t;
         }
         return null;
     }
 
-    public void addNew(Tour x){
+    public void addNew(){
+        Tour x = ndl.getTourInfo();
         if (searchTourById(x.getTourID()) != null) {
             System.out.println("Tour đã tồn tại");
             return;
@@ -134,95 +138,73 @@ public class TourManager extends ArrayList<Tour> {
         System.out.println("Add new thanh cong");
     }
     
-       public void UpdateByTourId(String id) {
-           Tour t = searchTourById(id);
-           if(searchTourById(id)==null){
-               System.out.println("This tour does not exist");
-               return;
-           }
-           
-           System.out.println("Update:");
-           System.out.println("(ko muốn update, enter lần nữa)");
-           
-           t.setTourName(getNewData("Tour Name: ", t.getTourName()));
-           t.setTime(getNewData("time: ", t.getTime()));
-           
-          
-           boolean flag = false;
-           while (flag == false) {
-               System.out.print("Price: ");
-               String priceS = sc.nextLine();
-               if (priceS.isEmpty()) {
-                   break;
-               }
-               try {
-                   Double p = Double.parseDouble(priceS);
-                   if (p < 0) {
-                       System.out.println("price ko dc âm");
-                   } else {
-                       t.setPrice(p);
-                       flag = true;
-                   }
-               } catch (Exception e) {
-                   System.out.println("Lổi định dang");
-               }
+    public void UpdateByTourId() {
+        String idS = ndl.getString("id to search: ");
+        Tour t = searchTourById(idS);
+        if (t == null) {
+            System.out.println("This tour does not exist");
+            return;
+        }
 
-           }
-        
-           
-           boolean flag1 = false;
-           while (flag == false) {
-               System.out.print("HomeID: ");
-               String HomeID = sc.nextLine();
-               if (HomeID.isEmpty()) {
-                   break;
-               }
+        System.out.println("Update:");
+        System.out.println("(ko muốn update, enter lần nữa)");
 
-               Homestay hs = hsManager.searchHomestayById(HomeID);
-               if (hs == null) {
-                   System.out.println("ko tim thay homestay");
-               } else {
-                   t.setHomeID(HomeID);
-                   flag = true;
-               }
-           }
-           
-           
-           t.setDeparture_date(getNewData("departure_date: ", t.getDeparture_date()));
-           t.setEnd_date(getNewData("end_date: ", t.getEnd_date()));
-        
-           boolean flag3 = false;
-           while (flag == false) {
-               System.out.print("number_Tourist: ");
-               String number_Tourist = sc.nextLine();
-               if (number_Tourist.isEmpty()) {
-                   break;
-               }
-               try {
-                   int n = Integer.parseInt(number_Tourist);
-                   Homestay hs = hsManager.searchHomestayById(t.getHomeID());
-                   if (n> hs.getMaximumcapacity()) {
-                       System.out.println("Qua suc chua");
-                   } else {
-                       t.setNumber_Tourist(n);
-                       flag = true;
-                   }
-               } catch (Exception e) {
-                   System.out.println("Lổi định dang");
-               }
-           }
-           
-           System.out.println("trạng thái booking cũ" + t.isBooking() +"-> update (true/false):");
-           String chance = sc.nextLine();
-           if(!chance.isEmpty()) t.setBooking(Boolean.parseBoolean(chance));
-           System.out.println("update thanh cong");
-           
+        t.setTourName(getNewData("Tour Name: ", t.getTourName()));
+        t.setTime(getNewData("time: ", t.getTime()));
+
+        while (true) {
+            try {
+                double p = Double.parseDouble(getNewData("price: ", String.valueOf(t.getPrice())));
+                if (p > 0) {
+                    t.setPrice(p);
+                    break;
+                }
+            } catch (Exception e) {
+                System.out.println("giá tien phai lon hon 0");
+            }
+        }
+
+        while (true) {
+            String newHome = getNewData("New hom ID: ", t.getHomeID());
+            if (hsManager.searchHomestayById(newHome.trim()) != null) {
+                t.setHomeID(newHome);
+                break;
+            }
+            System.out.println("Homestay ko t?n t?i");
+        }
+
+        while (true) {
+            String dDate = getNewData("Departure date [" + t.getDeparture_date() + "]: ", t.getDeparture_date());
+            String eDate = getNewData("End date [" + t.getEnd_date() + "]: ", t.getEnd_date());
+            if (ndl.isValidDateRange(dDate, eDate)) {
+                t.setDeparture_date(dDate);
+                t.setEnd_date(eDate);
+                break;
+            } else {
+                System.out.println("Ngày kết thúc phải diễn ra CÙNG NGÀY hoặc SAU ngày khởi hành!");
+            }
+        }
+
+        while (true) {
+            try {
+                int n = Integer.parseInt(getNewData("Number Tourist [" + t.getNumber_Tourist() + "]: ", String.valueOf(t.getNumber_Tourist())));
+                if (n <= hsManager.searchHomestayById(t.getHomeID()).getMaximumcapacity()) {
+                    t.setNumber_Tourist(n);
+                    break;
+                }
+            } catch (Exception e) {
+            }
+            System.out.println("-> LỖI: Vượt quá sức chứa Homestay hoặc sai định dạng số!");
+        }
+
+        t.setBooking(Boolean.parseBoolean(getNewData("Booking [" + t.isBooking() + "]: ", String.valueOf(t.isBooking()))));
+        System.out.println("-> Update thành công!");
+
     }
     
        
        public String getNewData(String mess, String OldData){
-           System.out.print(mess);
-           String newData = sc.nextLine();
+           String newData = ndl.getString(mess);
            
            return newData.isEmpty()? OldData : newData;
        }

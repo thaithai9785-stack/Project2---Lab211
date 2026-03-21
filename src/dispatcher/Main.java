@@ -15,8 +15,8 @@ public class Main {
     public static void main(String[] args) {
         Inputter ndl = new Inputter();
         HomestayManager hsManager = new HomestayManager();
-        TourManager tourManager = new TourManager(hsManager);
-        BookingManager bookingManager = new BookingManager(tourManager);
+        TourManager tourManager = new TourManager(ndl ,hsManager);
+        BookingManager bookingManager = new BookingManager(ndl, tourManager);
         
         Scanner sc = new Scanner(System.in);
         int choice ;
@@ -37,13 +37,10 @@ public class Main {
             sc.nextLine();
         switch (choice) {
                 case 1:
-                    Tour x = ndl.getTourInfo();
-                    tourManager.addNew(x);
+                    tourManager.addNew();
                     break;
                 case 2:
-                    System.out.println("Inter TourId to update:");
-                    String id = sc.nextLine();
-                    tourManager.UpdateByTourId(id);
+                    tourManager.UpdateByTourId();
                     break;
                 case 3:
                     tourManager.listToursDepartureEarlier();
@@ -52,8 +49,7 @@ public class Main {
                     tourManager.listToursDepartureLaterAndSort();
                     break;
                 case 5:
-                    Booking b = ndl.getBookingInfo();
-                    bookingManager.addNewBooking(b);
+                    bookingManager.addNewBooking();
                     break;
                 case 6:
                     System.out.println("Enter bookingID to remove: ");
