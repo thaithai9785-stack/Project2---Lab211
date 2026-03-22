@@ -28,8 +28,8 @@ public class TourManager extends ArrayList<Tour> {
     private HomestayManager hsManager;
     private String pathFile;
     private final String TABLE_HEADER = ("|------------------------------------------------------------------|\n"
-                + "| ID     | Tên Tour        | Thời gian       | Giá        | HomeID | Ngày đi    | Ngày về   |SL |Booking|\n"
-                + "|--------|-----------------|-----------------|------------|--------|------------|-----------|---|-------|");
+                + "| ID     | Tên Tour        | Thời gian       | Giá        | HomeID | Ngày đi    | Ngày về    |SL  |Booking|\n"
+                + "|--------|-----------------|-----------------|------------|--------|------------|------------|----|-------|");
    
     public TourManager(Inputter ndl, HomestayManager hsManager) {
         super();
@@ -44,23 +44,16 @@ public class TourManager extends ArrayList<Tour> {
     }
 
     public void readFromFile() {
-        this.clear(); 
+        this.clear();
         File f = new File(pathFile);
-        if (!f.exists()) {
-            System.out.println("File not found: " + pathFile);
-            return;
-        }
-
-        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
+        try(BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
-            while ((line = br.readLine()) != null) {
-                Tour x = textToTour(line);
-                if (x != null) this.add(x);
+            while ((line= br.readLine()) != null) {                
+                Tour t =textToTour(line);
+                if(t!=null) this.add(t);
             }
-            // In số lượng để kiểm tra thực tế trong RAM
-            System.out.println("Nạp thành công " + this.size() + " tours từ file!");
-        } catch (IOException ex) {
-            Logger.getLogger(TourManager.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("n?p tour thành công");
+        } catch (Exception e) {
         }
     }
     
@@ -68,28 +61,24 @@ public class TourManager extends ArrayList<Tour> {
     
     
     public Tour textToTour(String tam){
-        Tour t = null;
-        String[] temp = tam.split(",");
+        String[] temp=tam.split(",");
         try {
-
-            if (temp.length == 9) {
+            if(temp.length==9){
                 String id = temp[0].trim();
                 String name = temp[1].trim();
                 String time = temp[2].trim();
-                double price = Double.parseDouble(temp[3].trim().replaceAll("[^0-9.]", ""));
+                double price = Double.parseDouble(temp[3].trim());
                 String homeId = temp[4].trim();
                 String depDate = temp[5].trim();
                 String endDate = temp[6].trim();
                 int numTourist = Integer.parseInt(temp[7].trim().replaceAll("[^0-9]", ""));
                 boolean isBooked = Boolean.parseBoolean(temp[8].trim());
    
-                t = new Tour(id, name, time, price, homeId, depDate, endDate, numTourist, isBooked);            
- 
+                return new Tour(id, name, time, price, homeId, depDate, endDate, numTourist, isBooked);     
             }
         } catch (Exception e) {
-            t = null; 
-        }     
-        return t;
+        }
+        return  null;
     }
     
     
@@ -117,25 +106,26 @@ public class TourManager extends ArrayList<Tour> {
     }
 
     public void addNew(){
-        Tour x = ndl.getTourInfo();
-        if (searchTourById(x.getTourID()) != null) {
-            System.out.println("Tour đã tồn tại");
+        Tour t = ndl.getTourInfo();
+        if(searchTourById(t.getTourID().trim())!= null){
+            System.out.println("Tour dã t?n t?i");
             return;
         }
         
-        Homestay hs = hsManager.searchHomestayById(x.getHomeID());
-        if(hs == null){
-            System.out.println("ko tim thay homestay");
+        Homestay h = hsManager.searchHomestayById(t.getHomeID().trim());
+        if(h == null){
+            System.out.println("ko tim thay homewwwstay");
             return;
         }
         
-        if(x.getNumber_Tourist() > hs.getMaximumcapacity()){
-            System.out.println("ko du suc chua");
+        if(t.getNumber_Tourist()>h.getMaximumcapacity()){
+            System.out.println("qua suc chua");
             return;
         }
+        this.add(t);
+        System.out.println("add thanh cong");
         
-        this.add(x);
-        System.out.println("Add new thanh cong");
+        
     }
     
     public void UpdateByTourId() {
@@ -239,33 +229,31 @@ public class TourManager extends ArrayList<Tour> {
 
     // --- CASE 4: Lọc Tour khởi hành SAU ngày hiện tại và Sắp xếp giảm dần ---
     public void listToursDepartureLaterAndSort() {
-        System.out.println("\n--- DANH SÁCH TOUR KHỞI HÀNH SAU NGÀY HIỆN TẠI (SORTED BY TOTAL AMOUNT) ---");
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter fm = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         LocalDate currentDate = LocalDate.now();
-        
-        List<Tour> futureTours = new ArrayList<>();
 
+        ArrayList<Tour> result = new ArrayList<>();
+        
         for (Tour t : this) {
             try {
-                LocalDate depDate = LocalDate.parse(t.getDeparture_date(), formatter);
-                if (depDate.isAfter(currentDate)) { 
-                    futureTours.add(t);
+                LocalDate depDate = LocalDate.parse(t.getDeparture_date().trim(),fm);
+                if (depDate.isAfter(currentDate)) {
+                    result.add(t);
                 }
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                System.out.println(" lỗi " +t.getDeparture_date());
+            }
+
         }
 
-        if (futureTours.isEmpty()) {
-            System.out.println("Không có tour nào thỏa mãn điều kiện!");
-            return;
-        }
-
-        futureTours.sort((t1,t2)->Double.compare(t2.getTotalAmount(), t1.getTotalAmount()));
-
-        // In kết quả
+        result.sort((t1,t2)->Double.compare(t1.getTotalAmount(), t2.getTotalAmount()));
         System.out.println(TABLE_HEADER);
-        for (Tour t : futureTours) {
-            System.out.println(t.toString() + " Total Amount: " + t.getTotalAmount());
+        
+        for (Tour t : result) {
+            System.out.println(t.toString() + "Total Amount: "+t.getTotalAmount());
         }
+        
+
     }
 
     

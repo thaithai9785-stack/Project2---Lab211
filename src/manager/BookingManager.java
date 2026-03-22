@@ -58,7 +58,7 @@ public class BookingManager extends ArrayList<Booking> {
     // Định dạng giả định trong file txt: bookingID, fullName, tourID, booking_date, phone
     private Booking textToBooking(String line) {
         try {
-            String[] parts = line.split(","); // Tương tự Tour, dùng dấu phẩy
+            String[] parts = line.split(","); 
             if (parts.length >= 5) {
                 return new Booking(
                     parts[0].trim(), // bookingID
@@ -211,48 +211,6 @@ public class BookingManager extends ArrayList<Booking> {
     }
     
     
-  
-    public void printStatistics1(HomestayManager hsManager, TourManager tourManager) {
-        System.out.println("\n--- THỐNG KÊ SỐ LƯỢNG KHÁCH THEO HOMESTAY ---");
-        System.out.printf("| %-30s | %-15s |\n", "Tên Homestay", "Tổng số khách");
-        System.out.println("----------------------------------------------------");
-        
-        boolean hasData = false;
-
-        // 1. Quét từng Homestay
-        for (Homestay hs : hsManager) {
-            int totalTourists = 0;
-            String currentHsId = hs.getHomeID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase(); 
-
-            // 2. Quét kho Tour để lấy các Tour thuộc về Homestay này
-            for (Tour t : tourManager) {
-                String tourHomeId = t.getHomeID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-
-                if (tourHomeId.equals(currentHsId)) {
-                    String tourId = t.getTourID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-                    
-                    // 3. Quét kho Booking: Đếm xem có bao nhiêu Booking đặt cái Tour này
-                    for (Booking b : this) {
-                        String bTourId = b.getTourID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-
-                        if (bTourId.equals(tourId)) {
-                            totalTourists += t.getNumber_Tourist();
-                        }
-                    }
-                }
-            }
-
-            if (totalTourists > 0) {
-                System.out.printf("| %-30s | %-15d |\n", hs.getHomeName(), totalTourists);
-                hasData = true;
-            }
-        }
-
-        if (!hasData) {
-            System.out.println("Chưa có dữ liệu Booking nào để thống kê!");
-        }
-        System.out.println("----------------------------------------------------");
-    }
     
 
     
@@ -305,67 +263,5 @@ public class BookingManager extends ArrayList<Booking> {
         }
     }
     
-    
-    
-    
-    
-    
-    
-//     boolean check = false;
-//        for (Booking b : this) {
-//            if(b.getTourID().equalsIgnoreCase(tourID)){
-//                check = true;
-//                break;
-//            }
-//        }
-//        
-//        if(!check){
-//            Tour t = tourManager.searchTourById(tourID);
-//            if(t!=null)
-//            t.setBooking(false);
-//        }
-    
-    
-    
-    
-//     Tour targetTour = tourManager.searchTourById(b.getBookingID());
-//        System.out.print("Tour ID: ");
-//        String tourID= sc.nextLine();
-//        if(!tourID.isEmpty()){
-//            Tour t = tourManager.searchTourById(tourID);
-//            if(t==null)
-//                System.out.println("ko tim thay tour");
-//            else{
-//                b.setTourID(tourID);
-//                targetTour = t;
-//                t.setBooking(true);
-//            }
-//        }
-    
-    
-//    // 3. Cập nhật Ngày đặt (Dùng Cờ Boolean + Java 8 LocalDate cho đồng bộ)
-//        boolean validDate = false;
-//        while (!validDate) {
-//            System.out.print("Ngày đặt mới (Cũ: " + b.getBooking_date() + "): ");
-//            String newDate = sc.nextLine().trim();
-//            if (newDate.isEmpty()) {
-//                validDate = true; // Thoát nếu bấm Enter
-//            } else {
-//                try {
-//                    DateTimeFormatter fm = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-//                    LocalDate bookDate = LocalDate.parse(newDate, fm);
-//                    LocalDate depDate = LocalDate.parse(targetTour.getDeparture_date().trim(), fm);
-//                    
-//                    if (bookDate.isBefore(depDate)) {
-//                        b.setBooking_date(newDate);
-//                        validDate = true; // Hợp lệ -> Thoát vòng lặp
-//                    } else {
-//                        System.out.println("-> Lỗi: Ngày đặt phải TRƯỚC ngày khởi hành (" + targetTour.getDeparture_date() + ")!");
-//                    }
-//                } catch (Exception e) {
-//                    System.out.println("-> Lỗi định dạng ngày!");
-//                }
-//            }
-//        }
-    
+
 }
