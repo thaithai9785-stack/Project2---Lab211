@@ -44,16 +44,23 @@ public class TourManager extends ArrayList<Tour> {
     }
 
     public void readFromFile() {
-        this.clear();
+        this.clear(); 
         File f = new File(pathFile);
-        try(BufferedReader br = new BufferedReader(new FileReader(f))) {
+        if (!f.exists()) {
+            System.out.println("File not found: " + pathFile);
+            return;
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(f))) {
             String line;
-            while ((line= br.readLine()) != null) {                
-                Tour t =textToTour(line);
-                if(t!=null) this.add(t);
+            while ((line = br.readLine()) != null) {
+                Tour x = textToTour(line);
+                if (x != null) this.add(x);
             }
-            System.out.println("n?p tour thành công");
-        } catch (Exception e) {
+            // In số lượng để kiểm tra thực tế trong RAM
+            System.out.println("Nạp thành công " + this.size() + " tours từ file!");
+        } catch (IOException ex) {
+            Logger.getLogger(TourManager.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -61,26 +68,29 @@ public class TourManager extends ArrayList<Tour> {
     
     
     public Tour textToTour(String tam){
-        String[] temp=tam.split(",");
+        Tour t = null;
+        String[] temp = tam.split(",");
         try {
-            if(temp.length==9){
+
+            if (temp.length == 9) {
                 String id = temp[0].trim();
                 String name = temp[1].trim();
                 String time = temp[2].trim();
-                double price = Double.parseDouble(temp[3].trim());
+                double price = Double.parseDouble(temp[3].trim().replaceAll("[^0-9.]", ""));
                 String homeId = temp[4].trim();
                 String depDate = temp[5].trim();
                 String endDate = temp[6].trim();
                 int numTourist = Integer.parseInt(temp[7].trim().replaceAll("[^0-9]", ""));
                 boolean isBooked = Boolean.parseBoolean(temp[8].trim());
    
-                return new Tour(id, name, time, price, homeId, depDate, endDate, numTourist, isBooked);     
+                t = new Tour(id, name, time, price, homeId, depDate, endDate, numTourist, isBooked);            
+ 
             }
         } catch (Exception e) {
-        }
-        return  null;
+            t = null; 
+        }    
+        return t;
     }
-    
     
     public void printAllTours() {
       
