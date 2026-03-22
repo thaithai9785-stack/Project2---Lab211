@@ -58,9 +58,7 @@ public class Main {
                     bookingManager.updateBookingById();
                     break;
                 case 8:
-                    System.out.print("Nhập tên khách hàng cần tìm: ");
-                    String searchName = sc.nextLine().trim();
-                    bookingManager.listBookingsByName(searchName);
+                    bookingManager.listBookingsByName();
                     break;
                 case 9:
                     bookingManager.printStatistics(hsManager, tourManager); 

@@ -97,7 +97,6 @@ public class BookingManager extends ArrayList<Booking> {
             return;
         }
 
-        // Gọi thẳng trọng tài ra phán xử:
         if (!ndl.isDateBefore(b.getBooking_date(), t.getDeparture_date())) {
             System.out.println("-> LỖI: Ngày đặt phòng phải TRƯỚC ngày khởi hành!");
             return;
@@ -193,13 +192,14 @@ public class BookingManager extends ArrayList<Booking> {
     
     
     // --- CASE 8: TÌM KIẾM BOOKING THEO TÊN (Partial Name) ---
-    public void listBookingsByName(String searchName) {
-        System.out.println("\n--- KẾT QUẢ TÌM KIẾM BOOKING CHO: '" + searchName + "' ---");
+    public void listBookingsByName() {
+        String name = ndl.getString("Name to search: ");
+        System.out.println("\n--- KẾT QUẢ TÌM KIẾM BOOKING CHO: '" + name + "' ---");
+        
         boolean found = false;
-        String searchLower = searchName.trim().toLowerCase();
         
         for (Booking b : this) {
-            if (b.getFullName().toLowerCase().contains(searchLower)) {
+            if (b.getFullName().toLowerCase().contains(name.trim().toLowerCase())) {
                 System.out.println(b.toString());
                 found = true;
             }
@@ -267,23 +267,17 @@ public class BookingManager extends ArrayList<Booking> {
         // Quét từng Homestay
         for (Homestay hs : hsManager) {
             int totalTourists = 0;
-            String currentHsId = hs.getHomeID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase(); 
 
             // Quét từng Booking
             for (Booking b : this) {
-                String bookingTourId = b.getTourID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+                // TỐI ƯU: Dùng luôn hàm có sẵn để lôi Tour ra, KHÔNG CẦN lặp thêm vòng thứ 3 nữa
+                Tour t = tourManager.searchTourById(b.getTourID());
                 
-                // Quét từng Tour
-                for (Tour t : tourManager) {
-                    String tourId = t.getTourID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-                    String tourHomeId = t.getHomeID().replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
-
-                    if (tourId.equals(bookingTourId) && tourHomeId.equals(currentHsId)) {
-                        totalTourists += t.getNumber_Tourist();
-                    }
+                // Nếu Booking này hợp lệ VÀ ID Homestay của Tour đó khớp với Homestay đang xét
+                if (t != null && t.getHomeID().trim().equalsIgnoreCase(hs.getHomeID().trim())) {
+                    totalTourists += t.getNumber_Tourist();
                 }
             }
-
 
             if (totalTourists > 0) {
                 System.out.printf("| %-30s | %-15d |\n", hs.getHomeName(), totalTourists);
